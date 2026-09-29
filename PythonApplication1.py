@@ -1,11 +1,15 @@
-﻿import sys
+import os
+import sys
 from PySide6.QtWidgets import (
     QApplication, QWidget, QHBoxLayout, QVBoxLayout, 
     QLineEdit, QListWidget, QTextEdit, QLabel, QSplitter,
     QStackedWidget, QPushButton, QFrame, QScrollArea
 )
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QPixmap
+
+# Obtiene la ruta de la carpeta donde reside este archivo .py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Datos del Glosario extraídos de la versión previa
 GLOSARIO_IA = {
@@ -65,8 +69,16 @@ class VentanaPrincipal(QWidget):
         self.btn_clasificacion = QPushButton("📊 Clasificación")
         self.btn_timeline = QPushButton("⏳ Línea del Tiempo")
         self.btn_glosario = QPushButton("📖 Glosario")
+        self.btn_ensayo = QPushButton("📝 Ensayo")
 
-        self.botones_menu = [self.btn_inicio, self.btn_ramas, self.btn_clasificacion, self.btn_timeline, self.btn_glosario]
+        self.botones_menu = [
+            self.btn_inicio, 
+            self.btn_ramas, 
+            self.btn_clasificacion, 
+            self.btn_timeline, 
+            self.btn_glosario,
+            self.btn_ensayo
+        ]
 
         for index, btn in enumerate(self.botones_menu):
             btn.setCheckable(True)
@@ -80,12 +92,13 @@ class VentanaPrincipal(QWidget):
         # ---------------- Contenedor Dinámico (Stacked Widget) ----------------
         self.stack = QStackedWidget()
 
-        # Agregar las 5 páginas a la pila
+        # Agregar las 6 páginas a la pila
         self.stack.addWidget(self.crear_pagina_inicio())
         self.stack.addWidget(self.crear_pagina_ramas())
         self.stack.addWidget(self.crear_pagina_clasificacion())
         self.stack.addWidget(self.crear_pagina_timeline())
         self.stack.addWidget(self.crear_pagina_glosario())
+        self.stack.addWidget(self.crear_pagina_ensayo())
 
         main_layout.addWidget(self.stack)
 
@@ -167,8 +180,6 @@ class VentanaPrincipal(QWidget):
 
     # ---------------- 3. PÁGINA DE CLASIFICACIÓN (CON IMÁGENES) ----------------
     def crear_pagina_clasificacion(self):
-        from PySide6.QtGui import QPixmap
-
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         content = QWidget()
@@ -182,18 +193,18 @@ class VentanaPrincipal(QWidget):
         clasificaciones = [
             {
                 "titulo": "IA Débil o Estrecha (Narrow AI - ANI)", 
-                "desc": "Diseñada para resolver tareas específicas: traducción, recomendación, reconocimiento de imágenes, de voz o chat. Impulsa la mayor parte de la IA actual[cite: 4].",
-                "img": "Imagenes/ani.jpg"
+                "desc": "Diseñada para resolver tareas específicas: traducción, recomendación, reconocimiento de imágenes, de voz o chat. Impulsa la mayor parte de la IA actual.",
+                "img": "ani.jpg"
             },
             {
                 "titulo": "IA Fuerte o General (AGI - General Artificial Intelligence)", 
-                "desc": "Busca crear máquinas con inteligencia humana completa, capaces de realizar cualquier tarea intelectual. Es una categoría hipotética[cite: 3].",
-                "img": "Imagenes/agi.jpg"
+                "desc": "Busca crear máquinas con inteligencia humana completa, capaces de realizar cualquier tarea intelectual. Es una categoría hipotética.",
+                "img": "agi.jpg"
             },
             {
                 "titulo": "IA Superinteligente (ASI)", 
-                "desc": "Sistema hipotético que superaría a los humanos en todas las áreas cognitivas, siendo autoconsciente y con capacidad de planificación del futuro[cite: 2].",
-                "img": "Imagenes/asi.jpg"
+                "desc": "Sistema hipotético que superaría a los humanos en todas las áreas cognitivas, siendo autoconsciente y con capacidad de planificación del futuro.",
+                "img": "asi.jpg"
             }
         ]
 
@@ -212,8 +223,10 @@ class VentanaPrincipal(QWidget):
             card_layout.addWidget(lbl_type)
             card_layout.addWidget(lbl_desc)
 
-            # Cargar infografía correspondiente
-            pixmap = QPixmap(item["img"])
+            # Cargar infografía correspondiente con ruta absoluta
+            ruta_img = os.path.join(BASE_DIR, "Imagenes", item["img"])
+            pixmap = QPixmap(ruta_img)
+
             if not pixmap.isNull():
                 lbl_img = QLabel()
                 lbl_img.setPixmap(pixmap.scaledToWidth(750, Qt.SmoothTransformation))
@@ -230,10 +243,8 @@ class VentanaPrincipal(QWidget):
         scroll.setWidget(content)
         return scroll
 
-# ---------------- 4. PÁGINA DE LÍNEA DEL TIEMPO (CON INFOGRAFÍA) ----------------
+    # ---------------- 4. PÁGINA DE LÍNEA DEL TIEMPO (CON INFOGRAFÍA) ----------------
     def crear_pagina_timeline(self):
-        from PySide6.QtGui import QPixmap
-
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
         content = QWidget()
@@ -244,33 +255,30 @@ class VentanaPrincipal(QWidget):
         title.setStyleSheet("font-size: 24px; font-weight: bold; color: #1E293B; margin-bottom: 20px;")
         layout.addWidget(title)
 
-        # Posibles nombres y formatos para la imagen
-        opciones_ruta = [
-            "Imagenes/Linea_del_tiempo.png",
-            "Imagenes/Linea_del_tiempo.jpg",
-            "Imagenes/linea_del_tiempo.png",
-            "Imagenes/linea_del_tiempo.jpg"
+        nombres_archivo = [
+            "Linea_del_tiempo.jpg",
+            "Linea_del_tiempo.png",
+            "linea_del_tiempo.jpg",
+            "linea_del_tiempo.png"
         ]
 
         pixmap = QPixmap()
-        ruta_encontrada = ""
 
-        # Probar cada opción hasta encontrar el archivo exacto
-        for ruta in opciones_ruta:
-            pixmap = QPixmap(ruta)
+        # Cargar la imagen utilizando rutas absolutas
+        for nombre in nombres_archivo:
+            ruta_absoluta = os.path.join(BASE_DIR, "Imagenes", nombre)
+            pixmap = QPixmap(ruta_absoluta)
             if not pixmap.isNull():
-                ruta_encontrada = ruta
                 break
 
         if not pixmap.isNull():
             lbl_img = QLabel()
-            # Ajustamos el ancho a 800px para que el texto de la infografía sea legible
             lbl_img.setPixmap(pixmap.scaledToWidth(800, Qt.SmoothTransformation))
             lbl_img.setAlignment(Qt.AlignCenter)
             lbl_img.setStyleSheet("background-color: white; border: 1px solid #E2E8F0; border-radius: 8px; padding: 15px;")
             layout.addWidget(lbl_img)
         else:
-            lbl_error = QLabel("⚠️ No se encontró la imagen de la línea del tiempo en la carpeta 'Imagenes'.\nAsegúrate de guardar el archivo como 'Linea_del_tiempo.png' o '.jpg'")
+            lbl_error = QLabel("⚠️ No se encontró la imagen de la línea del tiempo en la carpeta 'Imagenes'.\nAsegúrate de desmarcar 'Bloquear' en las propiedades de la imagen o guardarla como formato PNG.")
             lbl_error.setStyleSheet("color: #EF4444; font-size: 14px; font-weight: bold; padding: 20px; background-color: #FEE2E2; border-radius: 8px;")
             layout.addWidget(lbl_error)
 
@@ -342,6 +350,85 @@ class VentanaPrincipal(QWidget):
         else:
             self.titulo_label.setText("Selecciona un término")
             self.definicion_text.clear()
+
+    # ---------------- 6. PÁGINA DEL ENSAYO ----------------
+    def crear_pagina_ensayo(self):
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        content = QWidget()
+        layout = QVBoxLayout(content)
+        layout.setContentsMargins(30, 30, 30, 30)
+
+        card = QFrame()
+        card.setStyleSheet("background-color: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 25px;")
+        card_layout = QVBoxLayout(card)
+
+        ensayo_html = """
+        <h1 style="color: #0F172A; font-size: 22px; margin-bottom: 15px;">La Encrucijada Algorítmica: Ética y Aspectos Sociales de la Inteligencia Artificial</h1>
+        
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">Introducción</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        La inteligencia artificial (IA) ha dejado de ser una especulación de la ciencia ficción para convertirse en el motor invisible —y cada vez más evidente— de la sociedad contemporánea. Desde la automatización industrial y el diagnóstico médico hasta la moderación de contenido en redes sociales y la optimización de procesos judiciales, los algoritmos moldean la vida cotidiana a una velocidad sin precedentes. Sin embargo, este despliegue masivo genera una tensión fundamental: la capacidad técnica para desarrollar modelos de IA avanza significativamente más rápido que nuestra comprensión de sus implicaciones éticas y sociales. Analizar la inteligencia artificial desde una perspectiva moral no es un freno al progreso, sino una condición indispensable para asegurar que la tecnología responda a los valores colectivos de justicia, equidad y dignidad humana.
+        </p>
+
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">Los Sesgos Algorítmicos y la Reproducción de la Inequidad</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        Uno de los mitos más persistentes en torno a la tecnología es la neutralidad del código. Los sistemas de aprendizaje automático no toman decisiones en un vacío abstracto; aprenden a partir de conjuntos de datos históricos que reflejan prejuicios, disparidades sistémicas y desigualdades culturales.<br><br>
+        Cuando un algoritmo de selección de personal o de concesión de créditos se entrena con datos procedentes de décadas pasadas, tiende a replicar y amplificar patrones de discriminación de género, raza o nivel socioeconómico. La opacidad de muchos de estos sistemas —el denominado fenómeno de la «caja negra»— dificulta la auditoría y la rendición de cuentas, desplazando la responsabilidad humana hacia procesos automatizados de difícil impugnación.
+        </p>
+
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">El Impacto en el Empleo y la Redefinición del Trabajo</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        En el plano socioeconómico, la automatización y la adopción de modelos generativos están transformando la estructura del mercado laboral. A diferencia de revoluciones industriales anteriores, que sustituyeron principalmente la fuerza física, la IA impacta directamente en tareas cognitivas, creativas y analíticas.
+        </p>
+        <ul style="font-size: 14px; color: #334155; line-height: 1.6;">
+            <li><b>Desplazamiento laboral:</b> Profesiones en áreas como atención al cliente, redacción técnica, análisis financiero básico y programación de rutina experimentan una reestructuración acelerada.</li>
+            <li><b>Brecha de habilidades:</b> La velocidad de transición sobrepasa la capacidad de adaptación de los sistemas educativos tradicionales, lo que corre el riesgo de polarizar el mercado entre una elite técnica altamente capacitada y una fuerza laboral precarizada.</li>
+            <li><b>Precarización y supervisión:</b> Las plataformas basadas en IA para la gestión del trabajo flexible imponen ritmos intensivos de supervisión algorítmica, debilitando en ocasiones los derechos laborales consolidados.</li>
+        </ul>
+
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">Privacidad, Vigilancia y Autonomía Individual</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        El modelo económico que sustenta a buena parte del desarrollo de la IA se basa en la extracción masiva de datos personales. La vigilancia comercial y estatal se ha profundizado a través de tecnologías como el reconocimiento facial, el análisis de comportamiento y el perfilado predictivo.<br><br>
+        Esta recopilación continua de información no solo plantea riesgos evidentes para la privacidad, sino que condiciona la autonomía individual. Algoritmos diseñados para maximizar la atención del usuario manipulan la información que este consume, influyendo en la opinión pública, polarizando el debate político y erosionando la confianza en las instituciones democráticas.
+        </p>
+
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">Gobernanza, Regulación y Responsabilidad</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        Ante estos desafíos, la comunidad internacional ha comenzado a articular marcos regulatorios normativos y éticos. Principios como la transparencia, la explicabilidad, la seguridad y la supervisión humana son hoy el eje central de normativas emergentes (como la Ley de Inteligencia Artificial de la Unión Europea y las recomendaciones de la UNESCO).
+        </p>
+        
+        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center; font-size: 13px; color: #334155; margin: 15px 0; border-color: #CBD5E1;">
+            <tr style="background-color: #F1F5F9;">
+                <th colspan="4" style="padding: 8px; color: #0F172A;">Ejes de la IA Responsable</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px;"><b>Transparencia y Auditoría</b></td>
+                <td style="padding: 8px;"><b>Equidad Sin Sesgos</b></td>
+                <td style="padding: 8px;"><b>Privacidad de Datos</b></td>
+                <td style="padding: 8px;"><b>Control Humano</b></td>
+            </tr>
+        </table>
+
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        El reto central radica en diseñar esquemas de gobernanza que protejan los derechos fundamentales sin asfixiar la innovación tecnológica ni acentuar la brecha entre los países desarrollados —que lideran la propiedad intelectual de la IA— y las naciones en desarrollo.
+        </p>
+
+        <h3 style="color: #2563EB; font-size: 16px; margin-top: 15px;">Conclusión</h3>
+        <p style="font-size: 14px; color: #334155; line-height: 1.6;">
+        La inteligencia artificial es un reflejo amplificado de la propia humanidad: contiene el potencial de resolver problemas globales complejos como el cambio climático o la medicina personalizada, pero también la capacidad de consolidar injusticias históricas. La dimensión ética de la IA no debe entenderse como un catálogo de prohibiciones, sino como un marco de diseño para garantizar que la tecnología se ponga al servicio de las personas. La construcción de un futuro donde la IA potencie el bienestar colectivo dependerá de la capacidad de los gobiernos, la industria y la sociedad civil para exigir transparencia, equidad y responsabilidad en cada etapa del desarrollo tecnológico.
+        </p>
+        """
+
+        lbl_ensayo = QLabel(ensayo_html)
+        lbl_ensayo.setWordWrap(True)
+        lbl_ensayo.setStyleSheet("border: none;")
+
+        card_layout.addWidget(lbl_ensayo)
+        layout.addWidget(card)
+
+        scroll.setWidget(content)
+        return scroll
 
 
 if __name__ == '__main__':
