@@ -142,6 +142,7 @@ class VentanaPrincipal(QWidget):
         self.btn_glosario = QPushButton("📖 Glosario")
         self.btn_ensayo = QPushButton("📝 Ensayo")
         self.btn_proyecto = QPushButton("🛠 Proyecto Práctico")
+        self.btn_busqueda = QPushButton("🔍 Algoritmos de Búsqueda") # <-- NUEVO BOTÓN
 
         self.botones_menu = [
             self.btn_inicio,
@@ -150,7 +151,8 @@ class VentanaPrincipal(QWidget):
             self.btn_timeline, 
             self.btn_glosario,
             self.btn_ensayo,
-            self.btn_proyecto
+            self.btn_proyecto,
+            self.btn_busqueda # <-- SE AGREGA A LA LISTA
         ]
 
         for index, btn in enumerate(self.botones_menu):
@@ -171,7 +173,8 @@ class VentanaPrincipal(QWidget):
         self.stack.addWidget(self.crear_pagina_timeline())        # 3
         self.stack.addWidget(self.crear_pagina_glosario())        # 4
         self.stack.addWidget(self.crear_pagina_ensayo())          # 5
-        self.stack.addWidget(self.crear_pagina_proyecto())        # 6 (Proyecto Práctico es el índice 6)
+        self.stack.addWidget(self.crear_pagina_proyecto())        # 6
+        self.stack.addWidget(self.crear_pagina_busqueda())        # 7 <-- NUEVA PÁGINA
 
         main_layout.addWidget(self.stack)
         self.cambiar_pagina(0)
@@ -663,7 +666,112 @@ class VentanaPrincipal(QWidget):
         scroll.setWidget(content)
         return scroll
 
+# ---------------- 8. ALGORITMOS DE BÚSQUEDA ----------------
+    def crear_pagina_busqueda(self):
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        content = QWidget()
+        layout = QVBoxLayout(content)
+        layout.setContentsMargins(30, 30, 30, 30)
 
+        card = QFrame()
+        card.setStyleSheet("background-color: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 25px;")
+        card_layout = QVBoxLayout(card)
+
+        html_content = """
+        <h1 style="color: #0F172A; font-size: 26px; margin-bottom: 12px; text-decoration: none;">¿Qué es un Algoritmo de Búsqueda?</h1>
+        
+        <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+        Un algoritmo de búsqueda es un conjunto de instrucciones paso a paso diseñado para localizar un elemento específico (o un grupo de elementos que cumplen ciertas condiciones) dentro de una estructura de datos, como un arreglo, lista, árbol o grafo.<br><br>
+        Su objetivo principal es determinar si un elemento buscado está presente y, en caso afirmativo, devolver su ubicación.
+        </p>
+
+        <h3 style="color: #2563EB; font-size: 18px; margin-top: 15px; text-decoration: none;">Elementos que intervienen en un algoritmo de búsqueda</h3>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Espacio de búsqueda:</b> La estructura de datos o la colección completa de elementos donde se realizará la búsqueda.</li>
+            <li><b>Objetivo (Target):</b> El valor, condición o elemento específico que se desea encontrar.</li>
+            <li><b>Estado actual/inicial:</b> La posición desde la cual el algoritmo comienza a buscar y los punteros que indican dónde se encuentra evaluando en cada paso.</li>
+            <li><b>Criterio de éxito/parada:</b> La condición que determina si el elemento ha sido encontrado o si se ha agotado el espacio de búsqueda.</li>
+        </ul>
+
+        <h3 style="color: #2563EB; font-size: 18px; margin-top: 15px; text-decoration: none;">Ejemplo de un algoritmo de búsqueda identificando elementos</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6;">
+        El uso de aplicaciones de navegación como Google Maps, Waze o Uber, las cuales implementan algoritmos de Búsqueda en Grafos y Búsqueda Informada (específicamente el Algoritmo A*).
+        </p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>El espacio de búsqueda (Grafo):</b> El mapa completo de la ciudad. Cada intersección de calles es un "nodo" y cada tramo de calle que las conecta es una "arista".</li>
+            <li><b>El objetivo:</b> Encontrar la ruta más rápida o corta desde tu ubicación actual (estado inicial) hasta tu destino final.</li>
+            <li><b>La heurística en acción:</b> El algoritmo no explora a ciegas todas las calles de la ciudad. Utiliza "pistas" o estimaciones (como la distancia en línea recta hacia el destino, los límites de velocidad y los reportes de tráfico en tiempo real) para priorizar las calles que lo acercan al objetivo y descartar inmediatamente las que van en dirección contraria.</li>
+        </ul>
+
+        <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 20px 0;">
+
+        <h2 style="color: #0F172A; font-size: 22px; margin-top: 15px; text-decoration: none;">Clasificación de algoritmos de búsqueda</h2>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsqueda Secuencial</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Estos algoritmos revisan los elementos uno tras otro en el orden en que aparecen dentro de la estructura de datos.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Búsqueda Lineal (Linear Search):</b> Es el método más intuitivo. Compara el objetivo iterativamente con cada elemento de una lista o arreglo hasta encontrar una coincidencia o llegar al final.</li>
+            <li><b>Complejidad temporal:</b> O(n) en el peor de los casos.</li>
+            <li><b>Casos de uso:</b> Estructuras de datos pequeñas, colecciones no ordenadas o flujos de datos donde no es posible el preprocesamiento.</li>
+        </ul>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsqueda por Intervalos (División y Conquista)</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Diseñados para estructuras de datos que ya están ordenadas. Su lógica principal radica en dividir repetidamente el espacio de búsqueda para descartar grandes porciones de datos en cada paso.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Búsqueda Binaria (Binary Search):</b> Compara el objetivo con el elemento central del arreglo. Si no coincide, descarta la mitad de la lista donde matemáticamente es imposible que esté el objetivo y repite el proceso.</li>
+            <li><b>Búsqueda Interpolada:</b> Una mejora de la búsqueda binaria que, en lugar de ir siempre al centro, estima la posición del objetivo basándose en los valores de los extremos.</li>
+            <li><b>Casos de uso:</b> Bases de datos estructuradas e índices ordenados.</li>
+        </ul>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsqueda en Grafos y Árboles</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Se utilizan para navegar por estructuras de datos complejas no lineales, donde los datos (nodos) están conectados por relaciones (aristas). Se dividen en dos subcategorías principales:</p>
+        
+        <h4 style="color: #8B5CF6; font-size: 17px; margin-top: 10px; margin-bottom: 5px; text-decoration: none;">A. Búsqueda No Informada (Ciega)</h4>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Exploran la estructura sin ninguna pista sobre qué tan lejos o en qué dirección está el objetivo.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Búsqueda en Anchura (BFS):</b> Explora todos los nodos a la profundidad actual antes de pasar al siguiente nivel. Utiliza una estructura de cola (FIFO). Es óptimo para encontrar el camino más corto en grafos no ponderados.</li>
+            <li><b>Búsqueda en Profundidad (DFS):</b> Explora lo más profundo posible a lo largo de cada rama antes de retroceder (backtracking). Utiliza una estructura de pila (LIFO). Es útil para resolver laberintos o analizar topologías de red.</li>
+        </ul>
+
+        <h4 style="color: #8B5CF6; font-size: 17px; margin-top: 10px; margin-bottom: 5px; text-decoration: none;">B. Búsqueda Informada (Heurística)</h4>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Utilizan una función de evaluación (heurística) para estimar el costo o la distancia restante hasta el objetivo, priorizando los caminos más prometedores.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Algoritmo A (A-Star):</b> Combina el costo exacto desde el inicio hasta el nodo actual con el costo estimado desde el nodo actual hasta el objetivo. Es el estándar para la navegación GPS y el movimiento de personajes en videojuegos.</li>
+            <li><b>Búsqueda Voraz (Greedy Best-First Search):</b> Elige siempre el nodo que parece estar más cerca del objetivo según la heurística, ignorando el costo acumulado. Es más rápido que A* pero no garantiza la ruta más corta.</li>
+        </ul>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsqueda basada en Transformación de Claves</h3>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Búsqueda por Hashing:</b> No recorre la estructura de datos. En su lugar, aplica una función matemática (función hash) al dato buscado para calcular directamente su dirección de memoria o índice en una Tabla Hash.</li>
+            <li><b>Casos de uso:</b> Cachés de bases de datos, diccionarios en lenguajes de programación y validación de contraseñas.</li>
+        </ul>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsqueda de Subcadenas (String Matching)</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Algoritmos especializados en encontrar un patrón corto de texto dentro de una cadena de texto mucho más larga.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Algoritmo Knuth-Morris-Pratt (KMP):</b> Analiza el patrón a buscar para evitar volver a comparar caracteres que ya se sabe que coinciden.</li>
+            <li><b>Algoritmo Rabin-Karp:</b> Utiliza funciones hash para comparar el patrón con subcadenas del texto, siendo extremadamente eficiente para buscar múltiples patrones simultáneamente.</li>
+        </ul>
+
+        <h3 style="color: #0EA5E9; font-size: 18px; margin-top: 15px; text-decoration: none;">Búsquedas Metaheurísticas y Avanzadas</h3>
+        <p style="font-size: 16px; color: #334155; line-height: 1.6; margin-top: 0;">Se aplican en problemas de optimización donde el espacio de búsqueda es infinito o matemáticamente intratable, y el objetivo no es encontrar un dato exacto, sino la mejor solución posible.</p>
+        <ul style="font-size: 16px; color: #334155; line-height: 1.6;">
+            <li><b>Búsqueda Local (Hill Climbing / Recocido Simulado):</b> Comienza con una solución aleatoria y la modifica iterativamente buscando mejorarla hasta alcanzar un pico óptimo.</li>
+            <li><b>Algoritmos Genéticos:</b> Simulan el proceso de selección natural, cruzando y mutando "poblaciones" de posibles soluciones para encontrar la más apta.</li>
+        </ul>
+        """
+
+        lbl_busqueda = QLabel(html_content)
+        lbl_busqueda.setWordWrap(True)
+        lbl_busqueda.setStyleSheet("border: none;")
+
+        card_layout.addWidget(lbl_busqueda)
+        layout.addWidget(card)
+
+        scroll.setWidget(content)
+        return scroll
+    
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     
